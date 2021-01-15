@@ -1,11 +1,11 @@
 import './App.css';
-import Advice from './components/Advice';
+import ApiCall from './components/ApiCall';
 
 
 function App() {
   return (
     <div className="App">
-      <Advice />
+      <ApiCall />
     </div>
   );
 }

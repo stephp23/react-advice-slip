@@ -1,35 +1,43 @@
-import React, { useState, useEffect } from "react";
+import {useState, useEffect} from "react"
 import axios from "axios";
-import Advice from "./Advice"
-import { CLIENT_URL } from '../Constants';
-
-const ApiCall = () => {
-
-  const [advice, setAdvice] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(CLIENT_URL);
-        const { results } = response.data
-        setAdvice(results)
-
-      } catch (error) {
-        console.log(error)
-      }
+import {SEARCH_ADVICE_URL} from '../Constants'
+import Advice from './Advice'
+​
+export default function SearchButton() {
+​
+    const [searchData, setSearchData] = useState([]);
+    const [searchInput, setSearchInput] = useState('');
+​
+    const handleChange = (event) => {
+        setSearchInput(event.target.value)
     }
-    fetchData();
-      
-  }, [])
-
-  return (
-    <h1>
-      {advice.maps((adviceItem, index) => {
-        const { adviceWord } = adviceItem;
-        return <Advice word={adviceWord} key={index} />
-      })}
-    </h1>
-  )
+​
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`${SEARCH_ADVICE_URL}${searchInput}`);
+            setSearchData(response.data.slips)
+        }
+        catch (err) {
+            console.log('Error', err)
+        }
+    }
+​
+    useEffect(() => {
+        fetchData();
+    }, [])
+​
+    return (
+        <div>
+            <h1>Search For Advice</h1>
+            <input onChange={handleChange} />
+            <button onClick={fetchData}>Search</button>
+​
+            <ul style={{ marginTop: 25 }}>
+                {searchData ? searchData.map((item, index) => {
+                    const { advice } = item;
+                    return  <Advice advice={advice} key={index} />;
+                }) : ""}
+            </ul>
+        </div>
+	);
 }
-
-export default ApiCall
